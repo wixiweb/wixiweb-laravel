@@ -1,0 +1,22 @@
+{
+    "name": "wixiweb/wixiweb-laravel",
+    "description": "Package pour configurer simplement une application laravel avec nos bonnes pratiques.",
+    "type": "library",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "Wixiweb\\WixiwebLaravel\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.38"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wixiweb\\WixiwebLaravel\\WixiwebServiceProvider"
+            ]
+        }
+    }
+}
