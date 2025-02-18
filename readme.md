@@ -5,7 +5,7 @@ Package pour configurer simplement une application laravel avec nos bonnes prati
 ## Installation
 
 ```shell
-compsoer require wixiweb/wixiweb-laravel
+composer require wixiweb/wixiweb-laravel
 ```
 
 ## Utilisation
