@@ -16,20 +16,29 @@ class Wixiweb
         $exceptions->dontReportDuplicates();
         $exceptions->dontTruncateRequestExceptions();
 
-        $exceptions->context(fn() => [
-            'auth' => [
-                'is_authenticated' => request()?->user() !== null,
-                'id' => request()?->user()?->id,
-            ],
-            'now' => now()->format(DateTimeInterface::ATOM),
-            'env' => app()->environment(),
-            'url' => (app()->runningInConsole()) ? 'CLI' : request()?->fullUrl(),
-            'GET' => request()?->query->all() ?? [],
-            'POST' => request()?->request->all() ?? [],
-            'FILES' => request()?->files->all() ?? [],
-        ]);
+        $exceptions->context(function () {
+            $context = [
+                'auth' => null,
+                'now' => now()->format(DateTimeInterface::ATOM),
+                'env' => config('app.env'),
+                'url' => 'CLI',
+            ];
 
-        $exceptions->report(function (MailableException $exception) {
+            if (!app()->runningInConsole()) {
+                $context['auth'] = [
+                    'is_authenticated' => request()?->user() !== null,
+                    'id' => request()?->user()?->id,
+                ];
+                $context['url'] = request()?->fullUrl();
+                $context['GET'] = request()?->query->all() ?? [];
+                $context['POST'] = request()?->request->all() ?? [];
+                $context['FILES'] = request()?->files->all() ?? [];
+            }
+
+            return $context;
+        });
+
+        $exceptions->report(function (MailableException $exception) : void {
             $logMailRecipients = config('wixiweb.logging.mail.recipients');
             if (count($logMailRecipients) >= 1) {
                 Mail::to($logMailRecipients)
@@ -37,7 +46,6 @@ class Wixiweb
                         new ExceptionMail($exception, Context::all())
                     );
             }
-
         });
     }
 }

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
-use Wixiweb\WixiwebLaravel\Commands\InstallCommand;
 
 class WixiwebServiceProvider extends ServiceProvider
 {
@@ -34,6 +33,12 @@ class WixiwebServiceProvider extends ServiceProvider
 
         Model::shouldBeStrict(config('wixiweb.strict_model'));
 
+
+        $prohibitDestructiveCommandsHandler = config('wixiweb.prohibit_destructive_commands_handler');
+        if (is_callable($prohibitDestructiveCommandsHandler)) {
+            DB::prohibitDestructiveCommands($prohibitDestructiveCommandsHandler($this->app));
+        }
+
         // S'assure que les jobs ne laissent pas de transaction ouverte
         Queue::looping(static function () {
             while (DB::transactionLevel() > 0) {
@@ -51,10 +56,18 @@ class WixiwebServiceProvider extends ServiceProvider
 
     private function registerEvents() : void
     {
-        Event::listen(MessageSending::class, function (MessageSending $event) {
-            if(count(config('wixiweb.mail.tags')) > 0)
+        Event::listen(MessageSending::class, static function (MessageSending $event) {
+            if(count(config('wixiweb.mail.tags', [])) > 0)
             {
                 $event->message->getHeaders()->addTextHeader('X-Tags', implode(',',config('wixiweb.mail.tags')));
+            }
+
+            if (count(config('wixiweb.mail.to', [])) > 0) {
+                $event->message->to(...config('wixiweb.mail.to'));
+            }
+
+            if (count(config('wixiweb.mail.bcc', [])) > 0) {
+                $event->message->bcc(...config('wixiweb.mail.bcc'));
             }
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace Wixiweb\WixiwebLaravel\Notifications;
 
 use Illuminate\Notifications\Notification;
 
