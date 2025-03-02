@@ -37,6 +37,10 @@ Il est possible de désactiver les commandes destructives pour certains environn
 
 Voir https://laravel.com/docs/11.x/queues#job-events. Rien à faire dans vos projets, c'est géré automatiquement.
 
+### Ajoute une commande artisan `wixiweb:db:create {dbname?}`
+
+Cette commande sert à créer une base de donnée si celle-ci n'existe pas. Par défaut prend la base configurée par défaut. Il est possible de passer en argument le nom de la base de donnée.
+
 ## Utilisation dans vos projets
 
 Dans le fichier `bootstrap/app.php` ajouter :
