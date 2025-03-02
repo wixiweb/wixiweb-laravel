@@ -14,10 +14,4 @@
             <directory suffix=".php">./src</directory>
         </include>
     </source>
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
-        <env name="MAIL_MAILER" value="log"/>
-        <env name="QUEUE_CONNECTION" value="database"/>
-    </php>
 </phpunit>

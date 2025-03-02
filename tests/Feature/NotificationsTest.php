@@ -4,7 +4,6 @@ use App\Models\User;
 use App\Notifications\TestMailNotification;
 use Illuminate\Mail\Events\MessageSending;
 use Symfony\Component\Mime\Address;
-use function Orchestra\Testbench\artisan;
 
 test('Notifications are redirected', function () {
 

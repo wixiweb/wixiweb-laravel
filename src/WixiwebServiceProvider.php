@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
+use Wixiweb\WixiwebLaravel\Console\Commands\DbCreateCommand;
 
 class WixiwebServiceProvider extends ServiceProvider
 {
@@ -27,6 +28,10 @@ class WixiwebServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/wixiweb.php' => config_path('wixiweb.php'),
             ], 'wixiweb-config');
+
+            $this->commands([
+                DbCreateCommand::class,
+            ]);
         }
 
         Number::useLocale(config('app.locale'));

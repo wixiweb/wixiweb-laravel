@@ -86,9 +86,10 @@ php artisan vendor:publish --tag=wixiweb
 
 1. Installer les dépendances
     ```shell
-    composer install
+    docker run -v .:/app -w /app composer install
     ```
 2. Jouer les tests
     ```shell
-    composer test
+    chmod u+x ./run-tests.sh
+   ./run-tests.sh
     ```
