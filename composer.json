@@ -3,6 +3,7 @@
     "description": "Package pour configurer simplement une application laravel avec nos bonnes pratiques.",
     "type": "library",
     "version": "1.0.0",
+    "license" : "MIT",
     "autoload": {
         "psr-4": {
             "Wixiweb\\WixiwebLaravel\\": "src/",
