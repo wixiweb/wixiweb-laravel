@@ -17,7 +17,10 @@ return [
             : [],
         'tags' => (env('APP_MAIL_TAGS') !== null)
             ? Str::of(env('APP_MAIL_TAGS'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
-            : []
+            : [],
+        'whitelist' => (env('APP_MAIL_WHITELIST') !== null)
+            ? Str::of(env('APP_MAIL_WHITELIST'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
+            : [],
     ],
     'logging' => [
         'mail' => [

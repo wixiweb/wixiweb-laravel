@@ -8,15 +8,23 @@ Package pour configurer simplement une application laravel avec nos bonnes prati
 composer require wixiweb/wixiweb-laravel
 ```
 
+## Publier le fichier de configuration
+
+```shell
+php artisan vendor:publish --tag=wixiweb
+```
+
 ## Fonctionnalités
 
 ### Redirection des envois de mail
 
 `APP_MAIL_TO` et `APP_MAIL_BCC` sont les variables d'environnement à configurer. Les deux variables prennent une liste d'adresses mail séparées par des virgules.
 
+Il est possible de mettre des adresses mail dans la variable `APP_MAIL_WHITELIST`, les mails pour ces adresses ne seront pas redirigés.
+
 ### Gestion de tag pour mailpit
 
-Il faut simplement mettre vos tags dans la variable d'environnement dans `APP_MAIL_TAGS`. Pour les notifications, il faut utiliser la classe `\Wixiweb\WixiwebLaravel\Notifications\ApplicationMailMessage`.
+Il faut simplement mettre vos tags dans la variable d'environnement dans `APP_MAIL_TAGS`.
 
 ### Possibilité d'envoyer des exceptions par mail
 
@@ -49,12 +57,6 @@ Dans le fichier `bootstrap/app.php` ajouter :
 ```
 
 **Le reste des fonctionnalités sont gérées automatiquement via la classe `\Wixiweb\WixiwebLaravel\WixiwebServiceProvider`.**
-
-## Publier le fichier de configuration
-
-```shell
-php artisan vendor:publish --tag=wixiweb
-```
 
 ## Développement
 

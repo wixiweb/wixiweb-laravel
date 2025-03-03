@@ -114,3 +114,33 @@ test('Mails dont have tags', function () {
 
     Mail::to('toto@example.com')->sendNow(new TestMail());
 });
+
+test('Mails are sent to whitelist', function () {
+    config()->set('wixiweb.mail.to', ['force@example.com']);
+    config()->set('wixiweb.mail.whitelist', ['test@example.com']);
+
+    Event::listen(MessageSending::class, static function (MessageSending $event) {
+        $addresses = array_map(static function (Address $address,) {
+            return $address->toString();
+        }, $event->message->getTo());
+        expect($addresses)->toBeArray()->toHaveCount(1)->toMatchArray(['test@example.com']);
+        return false;
+    });
+
+    Mail::to('test@example.com')->sendNow(new TestMail());
+});
+
+test('Mails are redirected if not whitelist', function () {
+    config()->set('wixiweb.mail.to', ['force@example.com']);
+    config()->set('wixiweb.mail.whitelist', ['test@example.com']);
+
+    Event::listen(MessageSending::class, static function (MessageSending $event) {
+        $addresses = array_map(static function (Address $address,) {
+            return $address->toString();
+        }, $event->message->getTo());
+        expect($addresses)->toBeArray()->toHaveCount(1)->toMatchArray(['force@example.com']);
+        return false;
+    });
+
+    Mail::to('test2@example.com')->sendNow(new TestMail());
+});

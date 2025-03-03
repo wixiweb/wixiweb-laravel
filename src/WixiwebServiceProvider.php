@@ -2,9 +2,9 @@
 
 namespace Wixiweb\WixiwebLaravel;
 
+use Composer\InstalledVersions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
-use Composer\InstalledVersions;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -55,13 +55,26 @@ class WixiwebServiceProvider extends ServiceProvider
     public function register() : void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/wixiweb.php', 'wixiweb'
+            __DIR__.'/../config/wixiweb.php', 'wixiweb',
         );
     }
 
     private function registerEvents() : void
     {
-        Event::listen(MessageSending::class, static function (MessageSending $event) {
+        Event::listen(MessageSending::class, static function (MessageSending $event,) {
+            $whitelistedAddresses = [];
+
+            foreach ($event->message->getTo() as $address) {
+                if (in_array($address->toString(), config('wixiweb.mail.whitelist'), true)) {
+                    $whitelistedAddresses[] = $address->toString();
+                }
+            }
+
+            if (count($whitelistedAddresses) > 0) {
+                $event->message->to(...$whitelistedAddresses);
+                return;
+            }
+
             if(count(config('wixiweb.mail.tags', [])) > 0)
             {
                 $event->message->getHeaders()->addTextHeader('X-Tags', implode(',',config('wixiweb.mail.tags')));
@@ -85,7 +98,7 @@ class WixiwebServiceProvider extends ServiceProvider
         ]);
     }
 
-    protected function getPackageVersion(string $package): string
+    protected function getPackageVersion(string $package,): string
     {
         if (InstalledVersions::isInstalled($package)) {
             return InstalledVersions::getPrettyVersion($package);
