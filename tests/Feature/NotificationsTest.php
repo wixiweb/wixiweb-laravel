@@ -29,7 +29,7 @@ test('Notifications are not redirected', function () {
         $addresses = array_map(static function (Address $address,) {
             return $address->toString();
         }, $event->message->getTo());
-        expect($addresses)->toBeArray()->toHaveCount(1)->toMatchArray(['toto@example.com']);
+        expect($addresses)->toBeArray()->toHaveCount(1)->toMatchArray(['test@example.com']);
         return false;
     });
 

@@ -10,12 +10,9 @@ composer require wixiweb/wixiweb-laravel
 
 ## Fonctionnalités
 
-### Redirection des envois de mail et notification par mail
+### Redirection des envois de mail
 
-Pour les notifications, il faut que votre model `notifiable` utilise le trait `\Wixiweb\WixiwebLaravel\Notifications\ConfigurableNotifiable` et que votre notification utilise la classe `\Wixiweb\WixiwebLaravel\Notifications\ApplicationMailMessage` à la place de `\Illuminate\Notifications\Messages\MailMessage`.
-
-Pour les mails en direct, c'est géré via les évènements donc rien à faire de particulier.
-`APP_MAIL_TO` et `APP_MAIL_BCC` sont les variables d'environnement à configurer.
+`APP_MAIL_TO` et `APP_MAIL_BCC` sont les variables d'environnement à configurer. Les deux variables prennent une liste d'adresses mail séparées par des virgules.
 
 ### Gestion de tag pour mailpit
 
@@ -51,32 +48,6 @@ Dans le fichier `bootstrap/app.php` ajouter :
 })
 ```
 
-Dans vos notifications :
-
-```php
-class TestMailNotification extends Notification
-{
-    ...
-    public function toMail($notifiable,): MailMessage
-    {
-        return (new ApplicationMailMessage()) // ← Utilisation de la classe ApplicationMailMessage. 
-            ->line('');
-    }
-    ...
-}
-```
-
-Dans vos models notifiable :
-
-```php
-
-class User extends Authenticatable
-{
-    use HasFactory, Notifiable, ConfigurableNotifiable; // ← Utilisation du trait ConfigurableNotifiable.
-    ...
-}
-```
-
 **Le reste des fonctionnalités sont gérées automatiquement via la classe `\Wixiweb\WixiwebLaravel\WixiwebServiceProvider`.**
 
 ## Publier le fichier de configuration
@@ -84,7 +55,6 @@ class User extends Authenticatable
 ```shell
 php artisan vendor:publish --tag=wixiweb
 ```
-
 
 ## Développement
 

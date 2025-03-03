@@ -19,7 +19,7 @@ class TestMailNotification extends Notification
 
     public function toMail($notifiable,): MailMessage
     {
-        return (new ApplicationMailMessage())
+        return (new MailMessage())
             ->line('');
     }
 }

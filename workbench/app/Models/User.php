@@ -9,7 +9,7 @@ use Wixiweb\WixiwebLaravel\Notifications\ConfigurableNotifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, ConfigurableNotifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
