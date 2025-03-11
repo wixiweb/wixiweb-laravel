@@ -38,12 +38,6 @@ class WixiwebServiceProvider extends ServiceProvider
 
         Model::shouldBeStrict(config('wixiweb.strict_model'));
 
-
-        $prohibitDestructiveCommandsHandler = config('wixiweb.prohibit_destructive_commands_handler');
-        if (is_callable($prohibitDestructiveCommandsHandler)) {
-            DB::prohibitDestructiveCommands($prohibitDestructiveCommandsHandler($this->app));
-        }
-
         // S'assure que les jobs ne laissent pas de transaction ouverte
         Queue::looping(static function () {
             while (DB::transactionLevel() > 0) {

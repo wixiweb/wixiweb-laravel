@@ -34,10 +34,6 @@ Toutes les exceptions qui implémentent l'interface `\Wixiweb\WixiwebLaravel\Exc
 
 Voir https://laravel.com/docs/11.x/eloquent#configuring-eloquent-strictness. Configurable dans le fichier de config dans la clé `strict_model`. Strict par défaut.
 
-### Prévention de l'exécution des commandes CLI destructives
-
-Il est possible de désactiver les commandes destructives pour certains environnements. Configurable dans le fichier de config dans la clé `prohibit_destructive_commands_envs`. Par défaut désactive uniquement pour la production.
-
 ### Gestion des transactions orpheline pour le système de queue
 
 Voir https://laravel.com/docs/11.x/queues#job-events. Rien à faire dans vos projets, c'est géré automatiquement.

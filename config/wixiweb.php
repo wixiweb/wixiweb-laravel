@@ -1,13 +1,9 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Str;
 
 return [
     'strict_model' => true,
-    'prohibit_destructive_commands_handler' => function(Application $app) {
-        return $app->environment('production');
-    },
     'mail' => [
         'to' => env('APP_MAIL_TO') !== null
             ? Str::of(env('APP_MAIL_TO'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
