@@ -23,6 +23,10 @@ test('Mailable exception should send a mail', function () {
     throwExceptionsAndTryToSendMail();
 
     Mail::assertSent(ExceptionMail::class, 'exceptions@example.com');
+    Mail::assertSent(ExceptionMail::class, function(ExceptionMail $exceptionMail) {
+        expect($exceptionMail->exceptionGlobalContext)->toBeArray()->not->toBeEmpty();
+        return true;
+    });
     Mail::assertSentCount(1);
 });
 

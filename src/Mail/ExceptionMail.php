@@ -14,13 +14,11 @@ class ExceptionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private MailableException $exception;
-    private array $exceptionGlobalContext;
-
-    public function __construct(MailableException $exception, array $exceptionGlobalContext)
+    public function __construct(
+        readonly public MailableException $exception,
+        readonly public array $exceptionGlobalContext
+    )
     {
-        $this->exception = $exception;
-        $this->exceptionGlobalContext = $exceptionGlobalContext;
     }
 
     public function envelope() : Envelope

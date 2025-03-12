@@ -3,9 +3,13 @@
 namespace Wixiweb\WixiwebLaravel;
 
 use Composer\InstalledVersions;
+use DateTimeInterface;
+use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -17,6 +21,7 @@ class WixiwebServiceProvider extends ServiceProvider
 {
     public function boot() : void
     {
+        $this->registerGlobalContext();
         $this->registerEvents();
         $this->registerViews();
 
@@ -82,6 +87,42 @@ class WixiwebServiceProvider extends ServiceProvider
                 $event->message->bcc(...config('wixiweb.mail.bcc'));
             }
         });
+
+        Event::listen(CommandStarting::class, static function (CommandStarting $event,) {
+            $arguments = $event->input->getArguments();
+            if ($event->input->hasArgument('command')) {
+                unset($arguments['command']);
+            }
+
+            Context::add([
+                'CLI' => [
+                    'command' => $event->command,
+                    'arguments' => $arguments,
+                    'options' => $event->input->getOptions(),
+                ]
+            ]);
+        });
+
+        Event::listen(RouteMatched::class, static function (RouteMatched $event,) {
+            Context::add([
+                'HTTP' => [
+                    'auth' => [
+                        'is_authenticated' => $event->request->user() !== null,
+                        'id' => $event->request->user()?->id,
+                    ],
+                    'url' => $event->request->fullUrl(),
+                    'GET' => $event->request->query(),
+                    'POST' => $event->request->post(),
+                    'FILES' => $event->request->allFiles(),
+                    'route' => [
+                        'name' => $event->route->getName(),
+                        'path' => $event->route->uri(),
+                        'parameters' => $event->route->parameters(),
+                        ...$event->route->getAction(),
+                    ]
+                ]
+            ]);
+        });
     }
 
     private function registerViews() : void
@@ -99,5 +140,13 @@ class WixiwebServiceProvider extends ServiceProvider
         }
 
         return '<fg=yellow;options=bold>INCORRECT</>';
+    }
+
+    private function registerGlobalContext() : void
+    {
+        Context::add([
+            'now' => now()->format(DateTimeInterface::ATOM),
+            'env' => config('app.env'),
+        ]);
     }
 }
