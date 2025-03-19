@@ -2,6 +2,7 @@
 
 namespace Wixiweb\WixiwebLaravel;
 
+use Carbon\CarbonImmutable;
 use Composer\InstalledVersions;
 use DateTimeInterface;
 use Illuminate\Console\Events\CommandStarting;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -40,6 +42,8 @@ class WixiwebServiceProvider extends ServiceProvider
         }
 
         Number::useLocale(config('app.locale'));
+
+        Date::use(CarbonImmutable::class);
 
         Model::shouldBeStrict(config('wixiweb.strict_model'));
 
