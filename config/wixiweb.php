@@ -24,5 +24,9 @@ return [
                 ? Str::of(env('LOG_MAIL_RECIPIENTS'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
                 : [],
         ],
+    ],
+    'basic_auth' => [
+        'username' => env('APP_BASIC_AUTH_USERNAME'),
+        'password' => env('APP_BASIC_AUTH_PASSWORD'),
     ]
 ];

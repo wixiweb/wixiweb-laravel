@@ -55,6 +55,17 @@ La classe surcharge celle de laravel pour permettre de mettre un message non tec
  Response::allow(message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
 ```
 
+### Ajoute un middleware pour faire de l'authentification HTTP basic
+
+Pour configurer les identifiants il faut configurer deux variables d'environnement `APP_BASIC_AUTH_USERNAME` et `APP_BASIC_AUTH_PASSWORD`.
+
+```php
+// Protéger des routes
+Route::middleware(BasicHttpAuthMiddleware::class)->group(static function () {
+   Route::get('/ma-route-protegee',  [AuthController::class, 'maRouteProtegee'])->name('maRouteProtegee');
+});
+```
+
 ## Utilisation dans vos projets
 
 Dans le fichier `bootstrap/app.php` ajouter :
