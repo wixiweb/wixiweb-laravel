@@ -55,6 +55,14 @@ La classe surcharge celle de laravel pour permettre de mettre un message non tec
  Response::allow(message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
 ```
 
+Pour afficher le message :
+
+```php
+$response = Gate::inspect('test');
+
+echo $response->humanReadableMessage();
+```
+
 ### Ajoute un middleware pour faire de l'authentification HTTP basic
 
 Pour configurer les identifiants il faut configurer deux variables d'environnement `APP_BASIC_AUTH_USERNAME` et `APP_BASIC_AUTH_PASSWORD`.

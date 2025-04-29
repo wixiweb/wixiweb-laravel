@@ -12,7 +12,7 @@ class Response extends \Illuminate\Auth\Access\Response
         parent::__construct($allowed, $message, $code);
     }
 
-    public function getHumanReadableMessage(): string
+    public function humanReadableMessage(): string
     {
         return $this->humanReadableMessage ?? $this->message ?? '';
     }
