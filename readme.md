@@ -42,6 +42,19 @@ Voir https://laravel.com/docs/11.x/queues#job-events. Rien à faire dans vos pro
 
 Cette commande sert à créer une base de donnée si celle-ci n'existe pas. Par défaut prend la base configurée par défaut. Il est possible de passer en argument le nom de la base de donnée.
 
+### Ajoute une classe de réponse pour les gates et policies
+
+Voir documentation officielle => https://laravel.com/docs/12.x/authorization#policy-responses
+
+La classe surcharge celle de laravel pour permettre de mettre un message non technique affichable aux utilisateurs.
+
+```php
+ Response::deny(message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
+ Response::denyWithStatus(400, message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
+ Response::denyAsNotFound(message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
+ Response::allow(message: 'Ceci est un message technique', humanReadableMessage: 'Ceci est un message pour être vu par les utilisateurs.');
+```
+
 ## Utilisation dans vos projets
 
 Dans le fichier `bootstrap/app.php` ajouter :
