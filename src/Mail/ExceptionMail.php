@@ -8,14 +8,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use ReflectionClass;
-use Wixiweb\WixiwebLaravel\Exceptions\MailableException;
+use Throwable;
 
 class ExceptionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public function __construct(
-        readonly public MailableException $exception,
+        readonly public Throwable $exception,
         readonly public array $exceptionGlobalContext
     )
     {
