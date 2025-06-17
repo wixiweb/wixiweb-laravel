@@ -1,5 +1,6 @@
 <?php
 
+use App\Exception\CustomMailableExceptionInterface;
 use App\Mails\TestMail;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Mail;
@@ -10,11 +11,17 @@ use Wixiweb\WixiwebLaravel\Mail\ExceptionMail;
 function throwExceptionsAndTryToSendMail() {
     Mail::fake();
 
-    $mailableException = new RunTimeMailableException('This is a test');
+    $mailableException = new RunTimeMailableException('RunTimeMailableException. This is a test always sent');
     report($mailableException);
 
-    $runtimeException = new RuntimeException('This is a test');
+    $runtimeException = new RuntimeException('RuntimeException. This is a test never sent');
     report($runtimeException);
+
+    $invalidArgumentException = new InvalidArgumentException('InvalidArgumentException. This is a test always sent');
+    report($invalidArgumentException);
+
+    $customClass = new class('$customClass. This is a test always sent') extends RuntimeException implements CustomMailableExceptionInterface {};
+    report($customClass);
 }
 
 test('Mailable exception should send a mail', function () {
@@ -27,7 +34,8 @@ test('Mailable exception should send a mail', function () {
         expect($exceptionMail->exceptionGlobalContext)->toBeArray()->not->toBeEmpty();
         return true;
     });
-    Mail::assertSentCount(1);
+
+    Mail::assertSentCount(3);
 });
 
 test('Mailable exception should not send a mail',  function () {
