@@ -53,6 +53,10 @@ class WixiwebServiceProvider extends ServiceProvider
                 DB::rollBack();
             }
         });
+
+        $this->publishes([
+            __DIR__.'/../config/wixiweb.php' => config_path('wixiweb.php'),
+        ], 'wixiweb-config');
     }
 
     public function register() : void

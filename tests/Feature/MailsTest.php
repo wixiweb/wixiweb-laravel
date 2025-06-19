@@ -156,3 +156,24 @@ test('Mails are redirected if not whitelist', function () {
 
     Mail::to('test2@example.com')->sendNow(new TestMail());
 });
+
+test('Error exceptions are sent by mail', function () {
+    config()->set('wixiweb.logging.mail.recipients', ['exceptions@example.com']);
+    Mail::fake();
+
+    $test = ['a' => 1];
+    try {
+        $test['b'];
+    }
+    catch (ErrorException $exception) {
+        report($exception);
+    }
+
+    Mail::assertSent(ExceptionMail::class, 'exceptions@example.com');
+    Mail::assertSent(ExceptionMail::class, function(ExceptionMail $exceptionMail) {
+        expect($exceptionMail->exceptionGlobalContext)->toBeArray()->not->toBeEmpty();
+        return true;
+    });
+
+    Mail::assertSentCount(1);
+});

@@ -84,19 +84,7 @@ Dans le fichier `bootstrap/app.php` ajouter :
 })
 ```
 
-Il est possible de spécifier des classes d'exception ou interfaces qui seront également envoyées par mail.
-
-```php
-->withExceptions(function (Exceptions $exceptions) {
-    Wixiweb::configureExceptionHandler(
-        $exceptions,
-        [
-            InvalidArgumentException::class,
-            CustomMailableExceptionInterface::class
-        ]
-    ); // ← ligne à ajouter
-})
-```
+Il est possible de spécifier des classes d'exception ou interfaces qui seront également envoyées par mail dans le fichier de configuration.
 
 **Le reste des fonctionnalités sont gérées automatiquement via la classe `\Wixiweb\WixiwebLaravel\WixiwebServiceProvider`.**
 

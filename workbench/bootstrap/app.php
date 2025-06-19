@@ -8,11 +8,10 @@ use function Orchestra\Testbench\default_skeleton_path;
 
 return Application::configure(basePath: $APP_BASE_PATH ?? default_skeleton_path())
     ->withExceptions(function (Exceptions $exceptions) {
-        Wixiweb::configureExceptionHandler(
-            $exceptions,
-            [
-                InvalidArgumentException::class,
-                CustomMailableExceptionInterface::class
-            ]
-        );
+        config()->set('wixiweb.mail.exceptions', [
+            InvalidArgumentException::class,
+            CustomMailableExceptionInterface::class,
+            ErrorException::class,
+        ]);
+        Wixiweb::configureExceptionHandler($exceptions);
     })->create();

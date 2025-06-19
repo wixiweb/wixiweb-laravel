@@ -12,12 +12,12 @@ use Wixiweb\WixiwebLaravel\Mail\ExceptionMail;
 
 class Wixiweb
 {
-    public static function configureExceptionHandler(Exceptions $exceptions, array $mailableExceptionClasses = []): void
+    public static function configureExceptionHandler(Exceptions $exceptions): void
     {
         $exceptions->dontReportDuplicates();
         $exceptions->dontTruncateRequestExceptions();
 
-        $mailableExceptionClassesCollection = new Collection($mailableExceptionClasses);
+        $mailableExceptionClassesCollection = new Collection(config('wixiweb.mail.exceptions', []));
         $allAreThrowables = $mailableExceptionClassesCollection->every(function (mixed $item) {
             return is_string($item)
                 && (
