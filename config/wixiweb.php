@@ -2,15 +2,6 @@
 
 use Illuminate\Support\Str;
 
-$reportedExceptions = [
-    Error::class,
-    ErrorException::class,
-];
-
-if (class_exists(PdoException::class)) {
-    $reportedExceptions[] = PdoException::class;
-}
-
 return [
     'strict_model' => true,
     'mail' => [
@@ -33,7 +24,11 @@ return [
                 ? Str::of(env('LOG_MAIL_RECIPIENTS'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
                 : [],
         ],
-        'exceptions' => $reportedExceptions,
+        'exceptions' => [
+            Error::class,
+            ErrorException::class,
+            PdoException::class,
+        ],
     ],
     'basic_auth' => [
         'username' => env('APP_BASIC_AUTH_USERNAME'),

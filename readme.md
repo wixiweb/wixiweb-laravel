@@ -88,6 +88,67 @@ Il est possible de spécifier des classes d'exception ou interfaces qui seront �
 
 **Le reste des fonctionnalités sont gérées automatiquement via la classe `\Wixiweb\WixiwebLaravel\WixiwebServiceProvider`.**
 
+### Fonctions helper
+
+#### trans_plural
+
+Cette fonction simplifie la traduction des formes singulier/pluriel. Utilise [trans_choice()](https://laravel.com/docs/localization#pluralization).
+
+```php
+trans_plural(string $singular, string $plural, int $count, array $replace = [], $locale = null) : string
+```
+
+Exemples d'utilisation :
+```php
+// Forme de base
+trans_plural('article', 'articles', 1); // Retourne 'article'
+trans_plural('article', 'articles', 2); // Retourne 'articles'
+
+// Avec le compteur
+trans_plural('article :count', 'articles :count', 1); // Retourne 'article 1'
+trans_plural('article :count', 'articles :count', 2); // Retourne 'articles 2'
+
+// Avec des variables personnalisées
+trans_plural('article de :name', 'articles de :name', 1, ['name' => 'Jean']); // Retourne 'article de Jean'
+```
+
+#### trans_plural_map
+
+Cette fonction permet des formes plurielles plus complexes en acceptant un tableau de chaînes associées à des compteurs spécifiques. Utilise [trans_choice()](https://laravel.com/docs/localization#pluralization).
+
+```php
+trans_plural_map(array $strings, int $count, array $replace = [], $locale = null) : string
+```
+
+Exemples d'utilisation :
+```php
+// Forme de base
+trans_plural_map([
+    '0,1' => 'article',
+    '2,*' => 'articles',
+], 1); // Retourne 'article'
+
+// Avec le compteur
+trans_plural_map([
+    '0,1' => 'article :count',
+    '2,*' => 'articles :count',
+], 2); // Retourne 'articles 2'
+
+// Avec des variables personnalisées
+trans_plural_map([
+    '0,1' => 'article de :name',
+    '2,*' => 'articles de :name',
+], 1, ['name' => 'Jean']); // Retourne 'article de Jean'
+
+// Cas plus complexes
+trans_plural_map([
+    '0' => 'Aucun article',
+    '1' => 'Un article',
+    '2,3,4' => ':count articles',
+    '5,*' => 'Beaucoup d\'articles (:count)',
+], 3); // Retourne '3 articles'
+```
+
 ## Développement
 
 1. Installer les dépendances
