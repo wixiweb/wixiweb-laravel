@@ -17,7 +17,7 @@ class Wixiweb
         $exceptions->dontReportDuplicates();
         $exceptions->dontTruncateRequestExceptions();
 
-        $mailableExceptionClassesCollection = new Collection(config('wixiweb.mail.exceptions', []));
+        $mailableExceptionClassesCollection = new Collection(config('wixiweb.logging.mail.exceptions', []));
         $allAreThrowables = $mailableExceptionClassesCollection->every(function (mixed $item) {
             return is_string($item)
                 && (

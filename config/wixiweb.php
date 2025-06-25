@@ -23,11 +23,11 @@ return [
             'recipients' => env('LOG_MAIL_RECIPIENTS') !== null
                 ? Str::of(env('LOG_MAIL_RECIPIENTS'))->squish()->explode(',')->filter()->map(fn(string $string) => trim($string))->all()
                 : [],
-        ],
-        'exceptions' => [
-            Error::class,
-            ErrorException::class,
-            PdoException::class,
+            'exceptions' => [
+                Error::class,
+                ErrorException::class,
+                PdoException::class,
+            ],
         ],
     ],
     'basic_auth' => [
