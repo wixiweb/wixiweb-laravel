@@ -3,6 +3,7 @@
 namespace Wixiweb\WixiwebLaravel;
 
 use Carbon\CarbonImmutable;
+use Closure;
 use Composer\InstalledVersions;
 use DateTimeInterface;
 use Illuminate\Console\Events\CommandStarting;
@@ -112,6 +113,12 @@ class WixiwebServiceProvider extends ServiceProvider
         });
 
         Event::listen(RouteMatched::class, static function (RouteMatched $event,) {
+            $routeAction = $event->route->getAction();
+
+            if (isset($routeAction['uses']) && $routeAction['uses'] instanceof Closure) {
+                $routeAction['uses'] = 'Closure';
+            }
+
             Context::add([
                 'HTTP' => [
                     'auth' => [
@@ -126,7 +133,7 @@ class WixiwebServiceProvider extends ServiceProvider
                         'name' => $event->route->getName(),
                         'path' => $event->route->uri(),
                         'parameters' => $event->route->parameters(),
-                        ...$event->route->getAction(),
+                        ...$routeAction,
                     ]
                 ]
             ]);
