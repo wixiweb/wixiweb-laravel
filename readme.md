@@ -11,7 +11,7 @@ composer require wixiweb/wixiweb-laravel
 ## Publier le fichier de configuration
 
 ```shell
-php artisan vendor:publish --tag=wixiweb
+php artisan vendor:publish --tag=wixiweb-config
 ```
 
 ## Fonctionnalités
