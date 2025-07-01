@@ -26,7 +26,7 @@ return [
             'exceptions' => [
                 Error::class,
                 ErrorException::class,
-                PdoException::class,
+                PDOException::class,
             ],
         ],
     ],
