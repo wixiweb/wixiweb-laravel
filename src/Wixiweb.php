@@ -51,7 +51,7 @@ class Wixiweb
         });
     }
 
-    protected static function sendExceptionMail(Throwable|MailableException $exception) : void
+    public static function sendExceptionMail(Throwable|MailableException $exception) : void
     {
         $logMailRecipients = config('wixiweb.logging.mail.recipients');
         if (count($logMailRecipients) >= 1) {
