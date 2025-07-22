@@ -70,6 +70,11 @@ class WixiwebServiceProvider extends ServiceProvider
     private function registerEvents() : void
     {
         Event::listen(MessageSending::class, static function (MessageSending $event,) {
+
+            if (isset($event->data['is_wixiweb_exception_mail']) && $event->data['is_wixiweb_exception_mail'] === true) {
+                return;
+            }
+
             $whitelistedAddresses = [];
 
             foreach ($event->message->getTo() as $address) {

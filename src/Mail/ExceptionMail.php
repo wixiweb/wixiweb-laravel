@@ -44,4 +44,11 @@ class ExceptionMail extends Mailable
             ],
         );
     }
+
+    protected function additionalMessageData(): array
+    {
+        return array_merge(parent::additionalMessageData(), ['is_wixiweb_exception_mail' => true]);
+    }
+
+
 }

@@ -25,7 +25,7 @@ services:
             MYSQL_USER: 'wixiweb-laravel'
             MYSQL_PASSWORD: 'password'
         ports:
-            - "3306:3306"
+            - "8001:3306"
         restart: always
         networks:
             - wixiweb-laravel
@@ -34,8 +34,8 @@ services:
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:
-            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
-            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+            - '8126:1025'
+            - '8125:8025'
         networks:
             - wixiweb-laravel
 networks:
