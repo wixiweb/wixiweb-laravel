@@ -27,6 +27,7 @@ class WixiwebServiceProvider extends ServiceProvider
         $this->registerGlobalContext();
         $this->registerEvents();
         $this->registerViews();
+        $this->registerTranslations();
 
         if ($this->app->runningInConsole()) {
             AboutCommand::add('Wixiweb laravel', fn() => [
@@ -168,5 +169,15 @@ class WixiwebServiceProvider extends ServiceProvider
             'now' => now()->format(DateTimeInterface::ATOM),
             'env' => config('app.env'),
         ]);
+    }
+
+    private function registerTranslations() : void
+    {
+        // Publication des traductions
+        $this->publishes([
+            __DIR__.'/../resources/lang' => $this->app->langPath('vendor/wixiweb-laravel'),
+        ], 'wixiweb-laravel-translations');
+
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'wixiweb-laravel');
     }
 }
