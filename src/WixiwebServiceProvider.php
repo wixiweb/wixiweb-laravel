@@ -6,6 +6,7 @@ use Carbon\CarbonImmutable;
 use Closure;
 use Composer\InstalledVersions;
 use DateTimeInterface;
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -127,10 +128,6 @@ class WixiwebServiceProvider extends ServiceProvider
 
             Context::add([
                 'HTTP' => [
-                    'auth' => [
-                        'is_authenticated' => $event->request->user() !== null,
-                        'id' => $event->request->user()?->id,
-                    ],
                     'url' => $event->request->fullUrl(),
                     'GET' => $event->request->query(),
                     'POST' => $event->request->post(),
@@ -141,6 +138,15 @@ class WixiwebServiceProvider extends ServiceProvider
                         'parameters' => $event->route->parameters(),
                         ...$routeAction,
                     ]
+                ]
+            ]);
+        });
+
+        Event::listen(Authenticated::class, static function (Authenticated $event,) {
+            Context::add([
+                'AUTH' => [
+                    'authenticated' => true,
+                    'user' => $event->user->getAuthIdentifier(),
                 ]
             ]);
         });
@@ -168,6 +174,13 @@ class WixiwebServiceProvider extends ServiceProvider
         Context::add([
             'now' => now()->format(DateTimeInterface::ATOM),
             'env' => config('app.env'),
+        ]);
+
+        Context::add([
+            'AUTH' => [
+                'authenticated' => false,
+                'user' => null,
+            ]
         ]);
     }
 
