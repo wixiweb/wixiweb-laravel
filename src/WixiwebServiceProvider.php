@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Context;
@@ -131,7 +132,15 @@ class WixiwebServiceProvider extends ServiceProvider
                     'url' => $event->request->fullUrl(),
                     'GET' => $event->request->query(),
                     'POST' => $event->request->post(),
-                    'FILES' => $event->request->allFiles(),
+                    'FILES' => collect($event->request->allFiles())->map(function (array|UploadedFile $fileOrGroup) {
+                        if (is_array($fileOrGroup)) {
+                            return collect($fileOrGroup)->map(function (UploadedFile $uploadedFile) {
+                                return ['name' => $uploadedFile->getClientOriginalName(), 'type' => $uploadedFile->getMimeType(), 'size' => $uploadedFile->getSize()];
+                            })->all();
+                        }
+
+                        return ['name' => $fileOrGroup->getClientOriginalName(), 'type' => $fileOrGroup->getMimeType(), 'size' => $fileOrGroup->getSize()];
+                    })->all(),
                     'route' => [
                         'name' => $event->route->getName(),
                         'path' => $event->route->uri(),

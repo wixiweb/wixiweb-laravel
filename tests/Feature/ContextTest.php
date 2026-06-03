@@ -1,6 +1,11 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+
+uses(RefreshDatabase::class);
 
 test('AUTH context defaults to guest values during an HTTP request', function () {
     $response = $this->get('/__wixiweb/context/guest?filter=recent');
@@ -23,6 +28,57 @@ test('AUTH context is updated when an authenticated user is resolved', function 
         ->assertJsonPath('AUTH.user', 123)
         ->assertJsonPath('HTTP.route.name', 'wixiweb.context.authenticated')
         ->assertJsonPath('HTTP.route.path', '__wixiweb/context/authenticated');
+});
+
+test('AUTH context stays authenticated across multiple pages after a session login', function () {
+    $user = User::factory()->create([
+        'email' => 'session-navigation@example.com',
+    ]);
+
+    $loginResponse = $this->get("/__wixiweb/context/session-login/{$user->getKey()}");
+
+    $loginResponse->assertRedirect('/__wixiweb/context/authenticated/page-one');
+
+    $sessionCookie = $loginResponse->getCookie(config('session.cookie'));
+
+    expect($sessionCookie)->not->toBeNull();
+
+    $this->withCookie($sessionCookie->getName(), $sessionCookie->getValue());
+
+    $pageOneResponse = $this->get('/__wixiweb/context/authenticated/page-one');
+    $pageTwoResponse = $this->get('/__wixiweb/context/authenticated/page-two?section=security');
+
+    $pageOneResponse
+        ->assertOk()
+        ->assertJsonPath('AUTH.authenticated', true)
+        ->assertJsonPath('AUTH.user', $user->getKey())
+        ->assertJsonPath('HTTP.route.name', 'wixiweb.context.authenticated.page-one')
+        ->assertJsonPath('HTTP.route.path', '__wixiweb/context/authenticated/page-one');
+
+    $pageTwoResponse
+        ->assertOk()
+        ->assertJsonPath('AUTH.authenticated', true)
+        ->assertJsonPath('AUTH.user', $user->getKey())
+        ->assertJsonPath('HTTP.url', 'http://localhost/__wixiweb/context/authenticated/page-two?section=security')
+        ->assertJsonPath('HTTP.route.name', 'wixiweb.context.authenticated.page-two')
+        ->assertJsonPath('HTTP.route.path', '__wixiweb/context/authenticated/page-two');
+});
+
+test('le contexte HTTP.FILES est sérialisable en JSON quand une exception est déclenchée pendant un upload', function () {
+    $uploadedFile = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf');
+
+    $response = $this->post('/__wixiweb/context/upload', [
+        'document' => $uploadedFile,
+    ]);
+
+    $response->assertOk();
+
+    $filesContext = $response->json('context.HTTP.FILES.document');
+
+    expect($filesContext)->toBeArray()
+        ->and($filesContext)->toHaveKey('name', 'document.pdf')
+        ->and($filesContext)->toHaveKey('type')
+        ->and($filesContext)->toHaveKey('size');
 });
 
 test('CLI context is filled when an artisan command starts', function () {
