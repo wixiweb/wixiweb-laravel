@@ -4,7 +4,9 @@ use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Wixiweb\WixiwebLaravel\Wixiweb;
 
 Route::get('/__wixiweb/context/guest', function () {
     return [
@@ -57,3 +59,27 @@ Route::post('/__wixiweb/context/upload', function () {
         ]);
     }
 })->name('wixiweb.context.upload');
+
+Route::match(['get', 'post'], '/__wixiweb/context/sensitive', function () {
+    return Wixiweb::getFilteredContext();
+})->name('wixiweb.context.sensitive');
+
+Route::match(['get', 'post'], '/__wixiweb/test/log-sensitive', function () {
+    Log::channel('test_filter')->info('Test filtrage logs');
+
+    return response()->json(['ok' => true]);
+})->name('wixiweb.test.log-sensitive');
+
+Route::match(['get', 'post'], '/__wixiweb/test/log-with-custom-context', function () {
+    Context::add([
+        'APP' => ['api_key' => 'secret-api-key', 'user_id' => 42],
+    ]);
+
+    Log::channel('test_filter')->info('Log avec contexte custom');
+
+    return response()->json(['ok' => true]);
+})->name('wixiweb.test.log-with-custom-context');
+
+Route::match(['get', 'post'], '/__wixiweb/test/exception-mail', function () {
+    throw new \InvalidArgumentException('Test exception pour vérifier le filtrage du contexte dans le mail');
+})->name('wixiweb.test.exception-mail');

@@ -8,6 +8,7 @@ use Composer\InstalledVersions;
 use DateTimeInterface;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Contracts\Log\ContextLogProcessor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 use Wixiweb\WixiwebLaravel\Console\Commands\DbCreateCommand;
+use Wixiweb\WixiwebLaravel\Logging\ContextFilterProcessor;
 
 class WixiwebServiceProvider extends ServiceProvider
 {
@@ -68,6 +70,8 @@ class WixiwebServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../config/wixiweb.php', 'wixiweb',
         );
+
+        $this->app->bind(ContextLogProcessor::class, fn () => new ContextFilterProcessor());
     }
 
     private function registerEvents() : void

@@ -29,9 +29,24 @@ return [
                 PDOException::class,
             ],
         ],
+        'context' => [
+            // Chemins en dot-notation à masquer.
+            // Seule la valeur exacte à ce chemin est masquée si elle est truthy.
+            'hidden_fields' => [
+                'HTTP.POST.password',
+                'HTTP.POST.password_confirmation',
+                'HTTP.POST.current_password',
+                'HTTP.POST._token',
+                'HTTP.GET.password',
+                'HTTP.GET.password_confirmation',
+                'HTTP.GET.current_password',
+            ],
+            // FQCN de filtres implémentant ContextFilterInterface, appliqués après la redaction.
+            'filters' => [],
+        ],
     ],
     'basic_auth' => [
         'username' => env('APP_BASIC_AUTH_USERNAME'),
         'password' => env('APP_BASIC_AUTH_PASSWORD'),
-    ]
+    ],
 ];
