@@ -30,6 +30,81 @@ Il faut simplement mettre vos tags dans la variable d'environnement dans `APP_MA
 
 Toutes les exceptions qui implémentent l'interface `\Wixiweb\WixiwebLaravel\Exceptions\MailableException` seront envoyées par mail aux addresses fournies dans la variable d'environnement `LOG_MAIL_RECIPIENTS`.
 
+### Filtrage du contexte des logs
+
+Le package ajoute automatiquement le contexte de la requête (`HTTP`), de l'utilisateur (`AUTH`), de la commande artisan (`CLI`), etc. à chaque log. Ces données peuvent contenir des informations sensibles (mots de passe, jetons, clés d'API…).
+
+Ce filtrage est appliqué automatiquement à **deux endroits** :
+
+- **Les logs fichiers** : via un `ContextLogProcessor` qui remplace celui de Laravel.
+- **Les mails d'exception** : le contexte joint au mail est filtré avant l'envoi.
+
+Aucune intervention n'est nécessaire : le filtrage est actif dès l'installation du package.
+
+#### Masquer des champs (`hidden_fields`)
+
+La configuration se fait dans le fichier `config/wixiweb.php`, sous la clé `logging.context.hidden_fields`. Le filtrage utilise la **dot-notation sur un chemin exact** : seule la valeur située exactement à ce chemin est masquée (remplacée par `***`).
+
+```php
+// config/wixiweb.php
+'logging' => [
+    // ...
+    'context' => [
+        'hidden_fields' => [
+            'HTTP.POST.password',
+            'HTTP.POST.password_confirmation',
+            'HTTP.POST.current_password',
+            'HTTP.POST._token',
+            'HTTP.GET.password',
+            'HTTP.GET.password_confirmation',
+            'HTTP.GET.current_password',
+        ],
+        'filters' => [],
+    ],
+],
+```
+
+Points importants :
+
+- Le chemin est **exact** : `HTTP.POST.password` masque uniquement cette position, et **pas** `HTTP.POST.profile.password` par exemple.
+- Une valeur « vide » (`null`, `''`, `0`, `false`) n'est pas masquée.
+- Pour masquer un champ ailleurs dans le contexte, ajoutez simplement son chemin complet (ex. `APP.api_key`).
+
+#### Ajouter des filtres personnalisés (`filters`)
+
+Pour transformer le contexte au-delà du simple masquage (ajout, suppression, anonymisation…), créez une classe implémentant `\Wixiweb\WixiwebLaravel\Logging\ContextFilterInterface` et déclarez-la dans `logging.context.filters`.
+
+```php
+namespace App\Filters;
+
+use Wixiweb\WixiwebLaravel\Logging\ContextFilterInterface;
+
+class AppendRequestIdFilter implements ContextFilterInterface
+{
+    public function filter(array $context): array
+    {
+        $context['request_id'] = request()->header('X-Request-Id');
+
+        return $context;
+    }
+}
+```
+
+```php
+// config/wixiweb.php
+'logging' => [
+    // ...
+    'context' => [
+        'hidden_fields' => [/* ... */],
+        'filters' => [
+            \App\Filters\AppendRequestIdFilter::class,
+        ],
+    ],
+],
+```
+
+Les filtres sont exécutés **après** le masquage des `hidden_fields`, dans l'ordre de déclaration. Ils s'appliquent à la fois aux logs fichiers et aux mails d'exception.
+
 ### Models stricts
 
 Voir https://laravel.com/docs/11.x/eloquent#configuring-eloquent-strictness. Configurable dans le fichier de config dans la clé `strict_model`. Strict par défaut.
