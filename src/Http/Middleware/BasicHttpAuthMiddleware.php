@@ -13,13 +13,26 @@ class BasicHttpAuthMiddleware
             return $next($request);
         }
 
-        $username = config('wixiweb.basic_auth.username');
-        $password = config('wixiweb.basic_auth.password');
-
-        if ($request->getUser() !== $username || $request->getPassword() !== $password) {
+        if (! self::hasValidCredentials($request)) {
             return response('Unauthorized', 401, ['WWW-Authenticate' => 'Basic']);
         }
 
         return $next($request);
+    }
+
+    /**
+     * Credentials are always rejected when the expected username or password is not configured.
+     */
+    public static function hasValidCredentials(Request $request): bool
+    {
+        $username = (string) config('wixiweb.basic_auth.username');
+        $password = (string) config('wixiweb.basic_auth.password');
+
+        if ($username === '' || $password === '') {
+            return false;
+        }
+
+        return hash_equals($username, (string) $request->getUser())
+            && hash_equals($password, (string) $request->getPassword());
     }
 }
